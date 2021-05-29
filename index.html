@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="http://fe.aaadns.com/component_1_0/css/component.src.css?v=202102031606">
+    <link rel="stylesheet" href="css/base2.src.css">
+</head>
+<body>
+  <h1>新人培训</h1>
+  <div id="editor" class="editor">
+    <tabs-component>
+        <tab-pane-component label="标签页1">
+            <div>a</div>
+        </tab-pane-component>
+        <tab-pane-component label="标签页2">
+            <div>b</div>
+        </tab-pane-component>
+    </tabs-component>
+    
+    <button-component @click="dialogFn">打开弹窗</button-component>
+
+    <button-component @click="buttonClick">Button</button-component>
+    <button-component @click="onClick">警告提示</button-component>
+    <input-component v-model="inputValue" :maxlength="50" placeholder="请输入" pattern="width: 300px;"></input-component>
+    <input-number-component v-model="numberValue" :min="0" :max="100"></input-number-component>
+    <color-picker-v2-component
+        v-model="color"
+        @on-change="handleChange"
+        @on-change-stop="handleChangeStop"
+        @on-click-default-click="handleDefaultClick"
+    />
+    
+  </div>
+  <script src="http://ma.aaadns.com/js/comm/jquery/jquery-core.src.js?v=201807250930"></script>
+  <script src="http://ma.aaadns.com/js/comm/jquery/jquery-ui-core.src.js?v=202004011247"></script>
+  <script src="http://ma.aaadns.com/js/comm/vue/vue-2.6.10.js?v=202005131247"></script>
+  <script src="http://ma.aaadns.com/js/comm/fai.src.js?v=201909251255"></script>
+  <script src="http://fe.aaadns.com/component_1_0/js/component_1_0.min.js?v=202012221114"></script>
+  <script>
+    let app = new Vue({
+        el: '#editor',
+        data: {
+            inputValue: "inputValue",
+            numberValue: 10,
+            color: "red",   
+        },
+        mounted() {
+
+        },
+        methods:{
+            dialogFn(){
+                var html =
+                    '<div id="popup-manage" class="popup-manage">popup-manage' +
+                        
+                    '</div>'
+                var options = {
+                    width: 723,
+                    height: 653,
+                    title : "编辑图片",
+                    noframeUrl: true,
+                    iconPopupTip: html,
+                    noPopupTipIcon: true,
+                    pWCenterHeight: 653 - 65 - 91//直接在弹窗里加入html，需要各处中间html内容高度 pWCenterHeight = height - pWHead - pWBottom
+                }
+
+                var popupID = Fai.popupWindowVersionTwo.createPopupWindow(options).getPopupWindowId();
+                Fai.popupWindowVersionTwo.addPopupWinBtnComponentDom({popupId: popupID, id:'save', text:'确 定', click:'save'});
+                Fai.popupWindowVersionTwo.addPopupWinBtnComponentDom({popupId: popupID, id:'close', text:'取 消', click:'close'});
+                Fai.popupWindowVersionTwo.renderPopupWinBtnComponent({popupId: popupID, initEvents: {save: save}});
+
+                function save() {
+                    var result = popupVm.url;
+                    Fai.closePopupWindow(popupID);
+                }
+
+                var popupVm = new Vue({
+                    el: "#popup-manage",
+                    data: {
+                        url: '',
+                    },
+                });
+            },
+            // 颜色变更时调用
+            handleChange(color) {
+                console.log("改变颜色:", color);
+            },
+            // 颜色面板消失时调用, color为当前颜色,lastColor上次使用的颜色
+            handleChangeStop(color, lastColor) {
+                console.log("颜色面板关闭:", color, lastColor);
+            },
+            // 恢复默认颜色时调用
+            handleDefaultClick(){
+                console.log("恢复默认颜色");
+            },
+            buttonClick(){
+                console.log("buttonClick");
+            },
+            onClick() {
+                this.$message({
+                    message: '警告提示',
+                    type: 'warning'
+                });
+            },
+        }
+    });
+  </script>
+</body>
+</html>
